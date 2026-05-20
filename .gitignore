@@ -29,3 +29,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+venv/
+.env
+__pycache__/
+*.pyc
+models/spam_roberta/model.safetensors
