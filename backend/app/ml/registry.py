@@ -10,13 +10,15 @@ from app.config import (
     URL_MODEL_PATH,
 )
 
-try:
-    import torch
-    from transformers import RobertaForSequenceClassification, RobertaTokenizerFast
-except Exception:
-    torch = None
-    RobertaForSequenceClassification = None
-    RobertaTokenizerFast = None
+_models_initialized = False
+trained_model = None
+text_vectorizer = None
+url_model = None
+combined_model = None
+phishing_model = None
+spam_tokenizer = None
+spam_model = None
+spam_device = None
 
 
 def load_pickle_model(path: Path):
@@ -36,31 +38,43 @@ def load_roberta_assets(model_dir: Path):
         model_dir / "tokenizer_config.json",
         model_dir / "model.safetensors",
     ]
-    if (
-        torch is None
-        or RobertaForSequenceClassification is None
-        or RobertaTokenizerFast is None
-        or not all(path.exists() for path in required_files)
-    ):
-        return None, None
+    if not all(path.exists() for path in required_files):
+        return None, None, None
+
+    try:
+        import torch
+        from transformers import RobertaForSequenceClassification, RobertaTokenizerFast
+    except Exception:
+        return None, None, None
 
     try:
         tokenizer = RobertaTokenizerFast.from_pretrained(model_dir)
         model = RobertaForSequenceClassification.from_pretrained(model_dir)
-        return tokenizer, model
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+        model.eval()
+        return tokenizer, model, device
     except Exception:
-        return None, None
+        return None, None, None
 
 
-trained_model = load_pickle_model(TEXT_MODEL_PATH)
-text_vectorizer = load_pickle_model(TEXT_VECTORIZER_PATH)
-url_model = load_pickle_model(URL_MODEL_PATH)
-combined_model = load_pickle_model(COMBINED_MODEL_PATH)
-phishing_model = load_pickle_model(PHISHING_MODEL_PATH)
-spam_tokenizer, spam_model = load_roberta_assets(SPAM_ROBERTA_DIR)
-spam_device = (
-    torch.device("cuda" if torch and torch.cuda.is_available() else "cpu") if torch else None
-)
-if spam_model is not None and spam_device is not None:
-    spam_model.to(spam_device)
-    spam_model.eval()
+def ensure_models_loaded() -> None:
+    """Load ML artifacts on first use so the web process can bind PORT quickly."""
+    global _models_initialized
+    global trained_model, text_vectorizer, url_model, combined_model, phishing_model
+    global spam_tokenizer, spam_model, spam_device
+
+    if _models_initialized:
+        return
+
+    trained_model = load_pickle_model(TEXT_MODEL_PATH)
+    text_vectorizer = load_pickle_model(TEXT_VECTORIZER_PATH)
+    url_model = load_pickle_model(URL_MODEL_PATH)
+    combined_model = load_pickle_model(COMBINED_MODEL_PATH)
+    phishing_model = load_pickle_model(PHISHING_MODEL_PATH)
+
+    roberta = load_roberta_assets(SPAM_ROBERTA_DIR)
+    if roberta[0] is not None:
+        spam_tokenizer, spam_model, spam_device = roberta
+
+    _models_initialized = True

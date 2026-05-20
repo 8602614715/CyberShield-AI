@@ -4,15 +4,7 @@ from urllib.parse import urlparse
 import pandas as pd
 import tldextract
 
-from app.ml.registry import (
-    phishing_model,
-    spam_device,
-    spam_model,
-    spam_tokenizer,
-    text_vectorizer,
-    torch,
-    trained_model,
-)
+from app.ml import registry
 
 
 def extract_url_candidate(text: str, supplied_url: str = "") -> str:
@@ -26,6 +18,8 @@ def extract_url_candidate(text: str, supplied_url: str = "") -> str:
 
 
 def build_phishing_features(url: str):
+    registry.ensure_models_loaded()
+    phishing_model = registry.phishing_model
     if phishing_model is None or not hasattr(phishing_model, "feature_names_in_"):
         return None
 
@@ -160,6 +154,9 @@ def build_phishing_features(url: str):
 
 
 def predict_with_trained_model(text: str):
+    registry.ensure_models_loaded()
+    trained_model = registry.trained_model
+    text_vectorizer = registry.text_vectorizer
     if trained_model is not None and text_vectorizer is not None:
         try:
             features = text_vectorizer.transform([text])
@@ -180,10 +177,16 @@ def predict_with_trained_model(text: str):
 
 
 def predict_with_spam_model(text: str):
+    registry.ensure_models_loaded()
+    spam_model = registry.spam_model
+    spam_tokenizer = registry.spam_tokenizer
+    spam_device = registry.spam_device
     if spam_model is None or spam_tokenizer is None or spam_device is None:
         return None
 
     try:
+        import torch
+
         inputs = spam_tokenizer(
             text,
             return_tensors="pt",
@@ -210,6 +213,8 @@ def predict_with_spam_model(text: str):
 
 
 def predict_with_phishing_model(text: str, supplied_url: str = ""):
+    registry.ensure_models_loaded()
+    phishing_model = registry.phishing_model
     if phishing_model is None:
         return None
 

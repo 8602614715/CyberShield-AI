@@ -8,6 +8,7 @@ router = APIRouter(tags=["models"])
 
 @router.get("/model-status")
 def model_status():
+    ml_registry.ensure_models_loaded()
     return {
         "text_model_loaded": ml_registry.trained_model is not None,
         "text_vectorizer_loaded": ml_registry.text_vectorizer is not None,

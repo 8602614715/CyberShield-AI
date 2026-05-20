@@ -3,7 +3,7 @@ import math
 import tldextract
 
 from app.core.constants import COMMON_CITIES, METRO_COORDS
-from app.core.nlp import geolocator, nlp
+from app.core.nlp import geolocator, get_nlp
 from app.db.mongodb import collection
 
 location_cache: dict[str, tuple[float, float]] = {}
@@ -35,7 +35,7 @@ def extract_location(text: str) -> str:
     if loc:
         return loc
 
-    doc = nlp(text)
+    doc = get_nlp()(text)
     for ent in doc.ents:
         if ent.label_ == "GPE":
             return ent.text.lower()
