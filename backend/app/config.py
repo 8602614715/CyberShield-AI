@@ -31,6 +31,10 @@ _cors_raw = os.environ.get(
     "https://cyber-shield-jf2fh1rv6-8602614715s-projects.vercel.app",
 )
 CORS_ORIGINS = [origin.strip() for origin in _cors_raw.split(",") if origin.strip()]
+CORS_ORIGIN_REGEX = os.environ.get(
+    "CORS_ORIGIN_REGEX",
+    r"https://cyber-shield-[a-z0-9-]+\.vercel\.app",
+)
 
 VT_API_KEY = os.environ.get("VT_API_KEY", "")
 
