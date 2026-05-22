@@ -4,26 +4,28 @@
   --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --bg-base: #070b12;
-  --bg-elevated: #0d131d;
-  --bg-surface: #111827;
-  --bg-surface-hover: #151e2e;
-  --bg-glass: rgba(13, 19, 29, 0.78);
+  --bg-base: #030712;
+  --bg-elevated: #090e1a;
+  --bg-surface: #0f1524;
+  --bg-surface-hover: #151c30;
+  --bg-glass: rgba(9, 14, 26, 0.75);
 
-  --border-subtle: rgba(148, 163, 184, 0.12);
-  --border-strong: rgba(148, 163, 184, 0.22);
+  --border-subtle: rgba(99, 102, 241, 0.06);
+  --border-strong: rgba(99, 102, 241, 0.15);
 
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
 
-  --accent: #22d3ee;
-  --accent-dim: rgba(34, 211, 238, 0.14);
-  --accent-strong: #06b6d4;
+  --accent: #6366f1;
+  --accent-dim: rgba(99, 102, 241, 0.12);
+  --accent-strong: #4f46e5;
+  --cyber-mint: #10b981;
+  --cyber-mint-dim: rgba(16, 185, 129, 0.12);
 
   --warning: #f59e0b;
   --danger: #f43f5e;
-  --success: #34d399;
+  --success: #10b981;
 
   --sidebar-width: 256px;
   --topbar-height: 56px;
@@ -32,9 +34,9 @@
   --radius-lg: 16px;
   --radius-xl: 22px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 0 0 1px rgba(34, 211, 238, 0.08), 0 24px 48px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 0 1px rgba(99, 102, 241, 0.1), 0 24px 48px rgba(0, 0, 0, 0.6);
 
   font-family: var(--font-sans);
   line-height: 1.55;

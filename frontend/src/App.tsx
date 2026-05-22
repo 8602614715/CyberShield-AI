@@ -28,7 +28,7 @@ const API_BASE = (configuredApiBase || (isLocalHost ? LOCAL_API_BASE : DEPLOYED_
 const REFRESH_INTERVAL_MS = 15000;
 const AUTO_SCROLL_STEP = 1;
 const AUTO_SCROLL_INTERVAL_MS = 80;
-const CHART_COLORS = ["#22d3ee", "#818cf8", "#fbbf24", "#34d399", "#fb7185", "#a78bfa"];
+const CHART_COLORS = ["#6366f1", "#10b981", "#f59e0b", "#f43f5e", "#8b5cf6", "#06b6d4"];
 
 const NAV_SECTIONS = [
   { id: "section-overview", label: "Overview" },
@@ -295,6 +295,58 @@ function formatHttpDetail(detail: unknown): string {
   return "Request failed";
 }
 
+function renderNavIcon(id: SectionId) {
+  if (id === "section-overview") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+      </svg>
+    );
+  }
+  if (id === "section-operations") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16M12 11v6M9 14h6" />
+      </svg>
+    );
+  }
+  if (id === "section-chatbot") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    );
+  }
+  if (id === "section-geo") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+        <line x1="9" y1="3" x2="9" y2="18" />
+        <line x1="15" y1="6" x2="15" y2="21" />
+      </svg>
+    );
+  }
+  if (id === "section-analytics") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
+        <path d="M3 20h18" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
 function App() {
   const [reports, setReports] = useState<Report[]>([]);
   const [mapReports, setMapReports] = useState<MapReport[]>([]);
@@ -314,6 +366,7 @@ function App() {
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isReportFeedHovered, setIsReportFeedHovered] = useState(false);
+  const [isAutoScrollPaused, setIsAutoScrollPaused] = useState(false);
   const reportListRef = useRef<HTMLDivElement | null>(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -480,7 +533,7 @@ function App() {
 
   useEffect(() => {
     const reportList = reportListRef.current;
-    if (!reportList || isReportFeedHovered || reports.length < 2) {
+    if (!reportList || isReportFeedHovered || isAutoScrollPaused || reports.length < 2) {
       return;
     }
 
@@ -495,7 +548,7 @@ function App() {
     }, AUTO_SCROLL_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
-  }, [isReportFeedHovered, reports]);
+  }, [isReportFeedHovered, isAutoScrollPaused, reports]);
 
   useEffect(() => {
     if (!reports.length) {
@@ -1188,14 +1241,7 @@ function App() {
                 className={`nav-link ${activeSection === item.id ? "active" : ""}`}
                 onClick={() => selectSection(item.id)}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
-                  <path
-                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                  />
-                </svg>
+                {renderNavIcon(item.id)}
                 {item.label}
               </button>
             ))}
@@ -1396,9 +1442,9 @@ function App() {
                     <Line
                       type="monotone"
                       dataKey="count"
-                      stroke="#22d3ee"
+                      stroke="#6366f1"
                       strokeWidth={2.5}
-                      dot={{ r: 4, fill: "#22d3ee" }}
+                      dot={{ r: 4, fill: "#6366f1" }}
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>
@@ -1590,8 +1636,8 @@ function App() {
                       center={[point.lat, point.lng]}
                       radius={Math.min(26, 8 + point.count * 2.2)}
                       pathOptions={{
-                        color: "#22d3ee",
-                        fillColor: "#818cf8",
+                        color: "#6366f1",
+                        fillColor: "#10b981",
                         fillOpacity: 0.55,
                         weight: 2,
                       }}
@@ -1757,8 +1803,29 @@ function App() {
 
           <section className="panel panel-reports">
             <div className="panel-heading">
-              <p className="panel-kicker">Live Feed</p>
-              <h3>Recent reports</h3>
+              <div>
+                <p className="panel-kicker">Live Feed</p>
+                <h3>Recent reports</h3>
+              </div>
+              <button
+                type="button"
+                className="btn-scroll-toggle"
+                onClick={() => setIsAutoScrollPaused(prev => !prev)}
+                title={isAutoScrollPaused ? "Resume Auto-Scroll" : "Pause Auto-Scroll"}
+                aria-label={isAutoScrollPaused ? "Resume Auto-Scroll" : "Pause Auto-Scroll"}
+              >
+                {isAutoScrollPaused ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="6" y="4" width="4" height="16" fill="currentColor" />
+                    <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+                  </svg>
+                )}
+                <span>{isAutoScrollPaused ? "Paused" : "Live"}</span>
+              </button>
             </div>
 
             <div className="report-filters">
