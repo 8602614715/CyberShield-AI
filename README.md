@@ -44,7 +44,7 @@ Required environment variables:
 MONGODB_URI=mongodb_url
 MONGODB_DB_NAME=db_name
 JWT_SECRET_KEY=your_secret_key
-CORS_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
+CORS_ORIGINS=http://127.0.0.1:5173,http://localhost:5173,vercel url
 VT_API_KEY=virus_total_api_key
 ```
 
@@ -103,7 +103,7 @@ Copy-Item .env.example .env.local
 4. **Root Directory**: `frontend`
 5. **Build Command**: `npm run build` (default)
 6. **Output Directory**: `dist`
-7. **Environment variable**: `VITE_API_BASE` = your Render backend URL (no trailing slash)
+7. **Environment variable**: `VITE_API_BASE_URL` = your Render backend URL (no trailing slash)
 8. Deploy and test login at the Vercel URL.
 
 ## GitHub Push Notes

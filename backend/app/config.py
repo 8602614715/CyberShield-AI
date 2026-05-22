@@ -23,7 +23,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
 _cors_raw = os.environ.get(
     "CORS_ORIGINS",
-    "http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:4173,http://localhost:4173",
+    "http://127.0.0.1:5173,"
+    "http://localhost:5173,"
+    "http://127.0.0.1:4173,"
+    "http://localhost:4173,"
+    "https://cyber-shield-ai-teal.vercel.app,"
+    "https://cyber-shield-jf2fh1rv6-8602614715s-projects.vercel.app",
 )
 CORS_ORIGINS = [origin.strip() for origin in _cors_raw.split(",") if origin.strip()]
 
