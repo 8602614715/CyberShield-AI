@@ -18,7 +18,7 @@ import {
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 import "./App.css";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000";
 const REFRESH_INTERVAL_MS = 15000;
 const AUTO_SCROLL_STEP = 1;
 const AUTO_SCROLL_INTERVAL_MS = 80;

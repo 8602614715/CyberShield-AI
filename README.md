@@ -88,6 +88,24 @@ Frontend URL:
 http://localhost:5173
 ```
 
+Optional local API override:
+
+```powershell
+cd frontend
+Copy-Item .env.example .env.local
+```
+
+## Deploy frontend (Vercel)
+
+1. Deploy the backend on Render and copy its URL (e.g. `https://cybershield-api.onrender.com`).
+2. In Render, set `CORS_ORIGINS` to your Vercel app URL (e.g. `https://your-app.vercel.app`).
+3. [vercel.com](https://vercel.com) → **Add New Project** → import this repo.
+4. **Root Directory**: `frontend`
+5. **Build Command**: `npm run build` (default)
+6. **Output Directory**: `dist`
+7. **Environment variable**: `VITE_API_BASE` = your Render backend URL (no trailing slash)
+8. Deploy and test login at the Vercel URL.
+
 ## GitHub Push Notes
 
 Do not push local virtual environments, installed packages, build folders, or large model binaries to GitHub.
